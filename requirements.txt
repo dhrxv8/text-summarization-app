@@ -1,0 +1,8 @@
+streamlit==1.26.0  # For the web app interface
+langchain==0.0.304  # For summarization and GPT-3.5 integration
+openai==0.27.8  # OpenAI's GPT-3.5 API integration
+pdfplumber==0.10.2  # For extracting text from PDF documents
+python-dotenv==1.0.0  # For environment variable management
+tenacity==8.2.2  # For retry logic (handling API rate limits)
+tiktoken==0.4.0  # Required for LangChain's token handling
+
