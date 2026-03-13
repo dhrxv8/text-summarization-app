@@ -1,83 +1,94 @@
+# Text & Document Summarization (Streamlit + LangChain + OpenAI)
 
-This project implements a web-based text summarization tool using GPT-3.5 and LangChain, integrated into a Streamlit app. Users can either input text directly or upload a `.txt` or `.pdf` file for summarization. The app uses the OpenAI API to summarize the provided text or documents.
+A simple Streamlit web app that summarizes **plain text** or **uploaded `.txt` / `.pdf` files** using **`gpt-3.5-turbo`** via LangChain.
 
 ## Features
-- **Summarize Text:** Input text to generate a summary.
-- **Summarize File:** Upload a `.txt` or `.pdf` file, and the app will extract the text and summarize it.
 
-## Installation
+- Summarize text pasted into the app
+- Upload and summarize `.txt` files
+- Upload and summarize `.pdf` files (extracts text with `pdfplumber`)
+- Minimal UI built with Streamlit
 
-To set up and run the project locally, follow these steps:
+## Tech Stack
+
+- **UI:** Streamlit
+- **LLM Orchestration:** LangChain (`ChatOpenAI`, `PromptTemplate`, `LLMChain`)
+- **Model:** OpenAI `gpt-3.5-turbo`
+- **PDF Text Extraction:** `pdfplumber`
+
+## How it works (high-level)
+
+1. Streamlit collects either:
+   - text from a text area, or
+   - an uploaded file (`.txt` / `.pdf`)
+2. For PDFs, text is extracted from each page via `pdfplumber`.
+3. The app sends the text to a LangChain summarization prompt:
+   - `Summarize the following text: ...`
+4. The OpenAI model returns a summary that’s displayed in the UI.
+
+## Project Structure
+
+- `app.py` — Streamlit UI
+- `text_summarization.py` — summarization logic + PDF extraction helpers
+- `requirements.txt` — pinned dependencies
+
+## Setup (Local)
 
 ### Prerequisites
-- Python 3.8+
-- OpenAI API key (get your API key from https://beta.openai.com/)
 
-### Setup
+- Python **3.8+**
+- An OpenAI API key
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/text-summarization-app
-   cd text-summarization-app
+### 1) Clone
 
-   ```
+```bash
+git clone https://github.com/dhrxv8/text-summarization-app.git
+cd text-summarization-app
+```
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 2) Install dependencies
 
-3. Set up your OpenAI API key:
-   - You can set the API key in the `secrets` of your Streamlit app by adding your OpenAI API key as `OPENAI_API_KEY`.
-   
-   Or, if you are running the project locally, you can use a `.env` file with the following content:
-   ```bash
-   OPENAI_API_KEY=your-api-key-here
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-4. Run the Streamlit app:
-   ```bash
-   streamlit run app.py
-   ```
+### 3) Configure your OpenAI API key (required)
 
-### Supported File Types
-- `.txt`
-- `.pdf`
+This project currently reads the key from **Streamlit secrets**:
 
-### App Overview
-- **Text Input:** Enter text directly in the input box, then click "Summarize Text" to get a summary.
-- **File Upload:** Upload a `.txt` or `.pdf` file and click "Summarize File" to get a summary of its content.
+- Create a file at: `.streamlit/secrets.toml`
+- Add:
+
+```toml
+OPENAI_API_KEY = "your-api-key-here"
+```
+
+### 4) Run the app
+
+```bash
+streamlit run app.py
+```
+
+Then open the local URL Streamlit prints in your terminal.
 
 ## Usage
 
-1. **Summarize Text:**
-   - Enter the text you want to summarize in the input field.
-   - Click the **Summarize Text** button, and the summary will appear below.
+### Summarize Text
+1. Paste text into the text box
+2. Click **Summarize Text**
+3. The summary appears below
 
-2. **Summarize File:**
-   - Upload a `.txt` or `.pdf` file.
-   - Click the **Summarize File** button, and the summary will be generated.
+### Summarize File
+1. Upload a `.txt` or `.pdf` file
+2. Click **Summarize File**
+3. The summary appears below
 
-## Example
+## Notes / Limitations
 
-1. **Text Input:**
-   - Input: "The quick brown fox jumps over the lazy dog."
-   - Output: "A fast fox leaps over a lazy dog."
-
-2. **File Upload:**
-   - Upload a `.pdf` document with content, and the app will extract and summarize the text from the document.
-
-## Dependencies
-
-The project uses the following Python packages:
-- `streamlit==1.26.0`: For creating the web app interface.
-- `langchain==0.0.304`: For summarization and integration with GPT-3.5.
-- `openai==0.27.8`: For accessing OpenAI's GPT-3.5 API.
-- `pdfplumber==0.10.2`: For extracting text from PDF files.
-- `python-dotenv==1.0.0`: For loading environment variables.
-- `tenacity==8.2.2`: For handling retry logic in case of API rate limits.
-- `tiktoken==0.4.0`: Required for token handling with LangChain.
+- **Large PDFs** may exceed model context limits and/or become slow/costly (no chunking implemented yet).
+- **Scanned PDFs** without an embedded text layer may return little/no text (OCR not implemented).
+- When summarizing PDFs, the current implementation writes the upload to `uploaded_file.pdf` locally.
 
 ## License
 
-This project is licensed under the MIT License.
+MIT — see `LICENSE`.
