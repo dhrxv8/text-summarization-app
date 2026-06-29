@@ -1,11 +1,7 @@
 import streamlit as st
-import sys
 from text_summarization import summarize_text, summarize_uploaded_file
 
 
-st.write(f"Streamlit is using this Python interpreter: {sys.executable}")
-
-# Set up the Streamlit app
 st.title("Text and Document Summarization")
 st.write("Upload a file (.txt or .pdf) or enter text to summarize.")
 
